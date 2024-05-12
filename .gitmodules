@@ -1,0 +1,3 @@
+[submodule "glibc-2.39"]
+	path = glibc-2.39
+	url = https://github.com/sagsango/glibc-2.39
