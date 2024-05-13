@@ -21,6 +21,9 @@ make -j 16
 # Install glibc
 make install
 
+# Run test
+make check
+
 # Return to the previous directory
 popd
 
