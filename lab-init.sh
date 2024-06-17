@@ -17,7 +17,7 @@ pushd glibc-build
 ${root}/glibc-2.39/configure --prefix=${root}/glibc-install  CFLAGS="-O1 -g" CXXFLAGS="-O1 -g"
 
 # Build glibc with 16 parallel jobs
-make -j 16
+make -j 56
 
 # Install glibc
 make install
