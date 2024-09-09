@@ -1,30 +1,40 @@
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
 
-#define NUM_THREADS 5
-
-void *thread_function(void *thread_id) {
-    long tid;
-    tid = (long)thread_id;
-    printf("Hello World! It's me, thread #%ld!\n", tid);
+// Thread function
+void* threadFunc(void* arg) {
+    int* threadNum = (int*)arg;
+    printf("Hello from thread %d\n", *threadNum);
+    free(threadNum); // Free the allocated memory for the argument
     pthread_exit(NULL);
 }
 
 int main() {
-    pthread_t threads[NUM_THREADS];
-    int rc;
-    long t;
+    pthread_t thread;
+    int* threadNum = malloc(sizeof(int)); // Allocate memory for the thread argument
+    if (threadNum == NULL) {
+        fprintf(stderr, "Failed to allocate memory\n");
+        return 1;
+    }
+    *threadNum = 1;
 
-    for (t = 0; t < NUM_THREADS; t++) {
-        printf("Creating thread %ld\n", t);
-        rc = pthread_create(&threads[t], NULL, thread_function, (void *)t);
-        if (rc) {
-            printf("ERROR: return code from pthread_create() is %d\n", rc);
-            exit(-1);
-        }
+    // Create a new thread
+    int rc = pthread_create(&thread, NULL, threadFunc, threadNum);
+    if (rc) {
+        fprintf(stderr, "Error: Unable to create thread, %d\n", rc);
+        free(threadNum); // Free the allocated memory if thread creation fails
+        return 1;
     }
 
-    pthread_exit(NULL);
+    // Wait for the thread to complete
+    rc = pthread_join(thread, NULL);
+    if (rc) {
+        fprintf(stderr, "Error: Unable to join thread, %d\n", rc);
+        return 1;
+    }
+
+    printf("Main thread completed\n");
+    return 0;
 }
 
